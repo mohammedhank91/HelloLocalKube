@@ -1,9 +1,14 @@
-# Use a lightweight web server to serve the HTML page
-FROM nginx:alpine
+FROM nginx:1.9
 
-# Copy all file in hostit-html 
-COPY hostit-html /usr/share/nginx/html
-COPY hostit-html/css /usr/share/nginx/html/css
-COPY hostit-html/js /usr/share/nginx/html/js
-COPY hostit-html/images /usr/share/nginx/html/images
-COPY hostit-html/fonts /usr/share/nginx/html/fonts
+ENV SWAGGER_UI_VERSION 2.1.2-M2
+ENV URL **None**
+
+RUN apt-get update \
+    && apt-get install -y curl \
+    && curl -L https://github.com/swagger-api/swagger-ui/archive/v${SWAGGER_UI_VERSION}.tar.gz | tar -zxv -C /tmp \
+    && cp -R /tmp/swagger-ui-${SWAGGER_UI_VERSION}/dist/* /usr/share/nginx/html \
+    && rm -rf /tmp/*
+
+COPY run.sh /run.sh
+
+CMD ["/run.sh"]
